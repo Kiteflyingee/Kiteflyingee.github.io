@@ -93,8 +93,17 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>搜索了很多关于Mac安装HomeAssistant的教程，提供的都是UTM虚拟机的安装方式，这种方式开机自启动是一个很大的问题，另外OS版本镜像大，占资源比docker要多。后来在Github Gist找到一篇解决方案，经尝试可行（<strong>需要修改</strong>）。原文链接可参考：<a target="_blank" rel="noopener" href="https://gist.github.com/dieu/96cded47544ee48ce0b3c69d529b723c">https://gist.github.com/dieu/96cded47544ee48ce0b3c69d529b723c</a></p>
-<h2 id="1-如何通过Docker安装HomeAssistant"><a href="#1-如何通过Docker安装HomeAssistant" class="headerlink" title="1. 如何通过Docker安装HomeAssistant"></a>1. 如何通过Docker安装HomeAssistant</h2><p>Mac版本通过Docker安装HomeAssistant集成Homekit最大的问题就是HASS Bridge连不上，通过本文脚本可以实现Docker环境下Bridge连接, <strong>需要严格按照本文的操作流程进行集成操作</strong>。</p>
+        <!-- toc -->
+
+<ul>
+<li><a href="#1-%E6%89%80%E9%9C%80%E6%96%87%E4%BB%B6">1. 所需文件</a></li>
+<li><a href="#2-%E5%AE%89%E8%A3%85%E8%BF%87%E7%A8%8B">2. 安装过程</a></li>
+<li><a href="#3-%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8">3. 设置开机自启动</a></li>
+</ul>
+<!-- tocstop -->
+
+<p>搜索了很多关于Mac安装HomeAssistant的教程，提供的都是UTM虚拟机的安装方式，这种方式开机自启动是一个很大的问题，另外OS版本镜像大，占资源比docker要多。后来在Github Gist找到一篇解决方案，经尝试可行（<strong>需要修改</strong>）。原文链接可参考：<a target="_blank" rel="noopener" href="https://gist.github.com/dieu/96cded47544ee48ce0b3c69d529b723c">https://gist.github.com/dieu/96cded47544ee48ce0b3c69d529b723c</a></p>
+<h2><span id="1-所需文件">1. 所需文件</span></h2><p>Mac版本通过Docker安装HomeAssistant集成Homekit最大的问题就是HASS Bridge连不上，通过本文脚本可以实现Docker环境下Bridge连接, <strong>需要严格按照本文的操作流程进行集成操作</strong>。</p>
 <p>需要准备几个文件： </p>
 <ul>
 <li>Dockerfile用于在官方的基础上构建补丁镜像   </li>
@@ -133,7 +142,7 @@
 <p>最终目录结构可以参考：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">HA</span><br><span class="line">├── config</span><br><span class="line">│   └── configuration.yml</span><br><span class="line">├── dns-sd.sh</span><br><span class="line">├── docker-compose.yml</span><br><span class="line">├── docker-entrypoint.sh</span><br><span class="line">└── Dockerfile</span><br></pre></td></tr></table></figure>
 
-<h2 id="2-安装过程"><a href="#2-安装过程" class="headerlink" title="2. 安装过程"></a>2. 安装过程</h2><p>docker的安装这里就不赘述了，网上有很多教程，MacOS大家可以安装Docker Desktop或者Orbstack，我这里使用的是Orbstack。</p>
+<h2><span id="2-安装过程">2. 安装过程</span></h2><p>docker的安装这里就不赘述了，网上有很多教程，MacOS大家可以安装Docker Desktop或者Orbstack，我这里使用的是Orbstack。</p>
 <ol>
 <li>打开终端。cd 到HA配置文件夹所在目录，检查文件结构是否和截图一致。</li>
 </ol>
@@ -169,7 +178,7 @@
 <li>使用家庭App添加配件，扫码会弹出未经授权的设备，忽略警告继续，这样很快设备就能连接上了。</li>
 </ol>
 <p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/5E866D32-4B39-4B40-BD7A-664624B9B0F4_1_102_o.jpeg" alt="5E866D32-4B39-4B40-BD7A-664624B9B0F4_1_102_o.jpeg"></p>
-<h2 id="3-设置开机自启动"><a href="#3-设置开机自启动" class="headerlink" title="3. 设置开机自启动"></a>3. 设置开机自启动</h2><ol>
+<h2><span id="3-设置开机自启动">3. 设置开机自启动</span></h2><ol>
 <li>首先打开Orbstack，设置开机自启动，方便我们的服务后续能够实现开机自启动，这也是通过Docker安装的一个重大优势，虚拟机形式难以实现开机自启动HA。</li>
 </ol>
 <p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%207.png" alt="image.png"></p>
@@ -187,7 +196,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://kiteflyingee.github.io/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/" data-id="cmeh5w92800009wjl4lzu6dhz" data-title="MacOS使用Docker运行HA并集成HomeKit" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://kiteflyingee.github.io/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/" data-id="cmeh62bp90000h1jlekht4qbc" data-title="MacOS使用Docker运行HA并集成HomeKit" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
