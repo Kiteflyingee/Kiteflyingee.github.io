@@ -110,22 +110,22 @@
 </ol>
 <figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> homeassistant/home-assistant:stable</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install avahi-daemon in container</span></span><br><span class="line"><span class="comment"># https://gnanesh.me/avahi-docker-non-root.html</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">set</span> -ex \</span></span><br><span class="line"><span class="language-bash">  &amp;&amp; apk --no-cache --no-progress add avahi avahi-tools dbus   \</span></span><br><span class="line"><span class="language-bash"><span class="comment">#   Disable default Avahi services</span></span></span><br><span class="line">  &amp;&amp; rm /etc/avahi/services/* \</span><br><span class="line">  &amp;&amp; rm -rf /var/cache/apk/*</span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> docker-entrypoint.sh /usr/local/sbin/</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">chmod</span> +x /usr/local/sbin/docker-entrypoint.sh</span></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;/usr/local/sbin/docker-entrypoint.sh&quot;</span>]</span></span><br></pre></td></tr></table></figure>
 
-<ol>
+<ol start="2">
 <li><a target="_blank" rel="noopener" href="http://docker-entrypoint.sh/">docker-entrypoint.sh</a></li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">set</span> -euxo pipefail</span><br><span class="line"></span><br><span class="line"><span class="comment"># Start dbus and avahi-daemon</span></span><br><span class="line"><span class="built_in">mkdir</span> -p /var/run/dbus/</span><br><span class="line"><span class="built_in">rm</span> -f /run/dbus/dbus.pid</span><br><span class="line">dbus-uuidgen &gt; /var/lib/dbus/machine-id</span><br><span class="line">dbus-daemon --config-file=/usr/share/dbus-1/system.conf --print-address</span><br><span class="line">avahi-daemon --daemonize </span><br><span class="line"></span><br><span class="line"><span class="comment"># Run anything else you want to run before HA starts...</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Run original entrypoint</span></span><br><span class="line"><span class="built_in">exec</span> /init</span><br></pre></td></tr></table></figure>
 
-<ol>
+<ol start="3">
 <li>docker-compose.yml</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">version: <span class="string">&#x27;1&#x27;</span></span><br><span class="line">services:</span><br><span class="line">  homeassistant:</span><br><span class="line">    container_name: homeassistant</span><br><span class="line">    build: .</span><br><span class="line">    volumes:</span><br><span class="line">      - ./config:/config</span><br><span class="line">      - /etc/localtime:/etc/localtime:ro</span><br><span class="line">    environment:</span><br><span class="line">      - TZ=Asia/Shanghai</span><br><span class="line">    network_mode: host</span><br><span class="line">    restart: unless-stopped</span><br><span class="line">    privileged: <span class="literal">true</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<ol>
+<ol start="4">
 <li><a target="_blank" rel="noopener" href="http://dns-sd.sh/">dns-sd.sh</a></li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash -x</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># register HASS Bridge by getting the avahi-browse output from the homeassistant container</span></span><br><span class="line">DNS_SD_NAME=<span class="string">&quot;HASS Bridge&quot;</span></span><br><span class="line"></span><br><span class="line">LOG_FILE=<span class="string">&quot;./dns-sd.log&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">prepare_command</span></span>() &#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&#x27;/usr/local/bin/docker exec -t $(/usr/local/bin/docker ps | grep homeassistant | cut -d&quot; &quot; -f1) avahi-browse -t -r -p -k _hap._tcp | grep -m 1 &quot;HASS Bridge&quot; | cut -d&quot;;&quot; -f5-6,9-10 | awk -F&quot;;&quot; &#x27;</span>\&#x27;<span class="string">&#x27;&#123;printf &quot;dns-sd -R \&quot;HASS Bridge\&quot; %s %s %s %s\n&quot;, $1, $2, $3, $4&#125;&#x27;</span>\&#x27;<span class="string">&#x27;&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">DNS_SD_CMD=<span class="string">&quot;&quot;</span>  <span class="comment"># Declare CMD as a global variable</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">run_command</span></span>() &#123;</span><br><span class="line">    PREPARE=$(prepare_command)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Prepare command: <span class="variable">$PREPARE</span>&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">    DNS_SD_CMD=$(<span class="built_in">eval</span> <span class="variable">$PREPARE</span>)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Running command: <span class="variable">$DNS_SD_CMD</span>&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">    <span class="built_in">eval</span> <span class="variable">$DNS_SD_CMD</span> &gt;&gt; <span class="variable">$LOG_FILE</span> 2&gt;&amp;1 &amp;</span><br><span class="line">    pid=$!</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Command running with PID: <span class="variable">$pid</span>&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">check_and_run_command</span></span>() &#123;</span><br><span class="line">    <span class="keyword">if</span> pgrep -f <span class="string">&quot;<span class="variable">$DNS_SD_NAME</span>&quot;</span> &gt;/dev/null; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Command is already running. Killing it...&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">        pkill -f <span class="string">&quot;<span class="variable">$DNS_SD_NAME</span>&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    run_command</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">check_if_need_run</span></span>() &#123;</span><br><span class="line">    PREPARE=$(prepare_command)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Prepare command: <span class="variable">$PREPARE</span>&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">    NEW_DNS_SD_CMD=$(<span class="built_in">eval</span> <span class="variable">$PREPARE</span>)</span><br><span class="line">    <span class="keyword">if</span> [[ <span class="string">&quot;<span class="variable">$NEW_DNS_SD_CMD</span>&quot;</span> != <span class="string">&quot;<span class="variable">$DNS_SD_CMD</span>&quot;</span> ]]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;DNS_SD_CMD is not the same.&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">        check_and_run_command</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;DNS_SD_CMD is the same.&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">interval=86400  <span class="comment"># 24 hours in seconds</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Infinite loop to periodically run the check</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    check_if_need_run</span><br><span class="line">    <span class="built_in">sleep</span> <span class="variable">$interval</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
 
-<ol>
+<ol start="5">
 <li>configuration.yml, 在当前目录下新建config文件夹，把configuration.yml放进去。</li>
 </ol>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">homekit:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">HASS</span> <span class="string">Bridge</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">51827</span></span><br><span class="line">    <span class="attr">advertise_ip:</span> <span class="number">192.168</span><span class="number">.2</span><span class="number">.183</span></span><br></pre></td></tr></table></figure>
@@ -138,34 +138,34 @@
 <li>打开终端。cd 到HA配置文件夹所在目录，检查文件结构是否和截图一致。</li>
 </ol>
 <p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image.png" alt="image.png"></p>
-<ol>
+<ol start="2">
 <li>执行docker镜像编译，打包我们的镜像。这里会拉取homeassistant，如果拉取不下来可以使用<a target="_blank" rel="noopener" href="https://dockerproxy.net/">https://dockerproxy.net/</a>拉取镜像。因为构建我们的镜像还需要安装avahi avahi-tools dbus等，所以构建需要一段时间。</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker compose build</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%201.png" alt="image.png"></p>
-<ol>
+<ol start="3">
 <li>启动镜像</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker compose up -d</span><br></pre></td></tr></table></figure>
 
-<ol>
+<ol start="4">
 <li>打开<a target="_blank" rel="noopener" href="http://localhost:8123/config/integrations/dashboard">http://localhost:8123</a> 创建账号并登陆。</li>
 </ol>
 <p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%202.png" alt="image.png"></p>
-<ol>
+<ol start="5">
 <li>添加集成，选择Apple，添加HomeKit Bridge, 选择你需要添加的实体类型，这里随便设置，后期可以修改。</li>
 </ol>
 <p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%203.png" alt="image.png"></p>
 <p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%204.png" alt="image.png"></p>
-<ol>
+<ol start="6">
 <li>添加完成会出现通知，点击通知弹出Homekit配对。<strong>这时候就要用到我们的dns-sd.sh脚本,在终端执行这个脚本, 这个脚本可以解决docker环境下mDNS问题</strong>。服务启动后，我们就可以使用iPhone设备配对了。终端关闭会导致Homekit Bridge失去连接，后面的章节将介绍如何开机自启动。</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh dns-sd.sh</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%205.png" alt="image.png"></p>
 <p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%206.png" alt="image.png"></p>
-<ol>
+<ol start="7">
 <li>使用家庭App添加配件，扫码会弹出未经授权的设备，忽略警告继续，这样很快设备就能连接上了。</li>
 </ol>
 <p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/5E866D32-4B39-4B40-BD7A-664624B9B0F4_1_102_o.jpeg" alt="5E866D32-4B39-4B40-BD7A-664624B9B0F4_1_102_o.jpeg"></p>
@@ -173,7 +173,7 @@
 <li>首先打开Orbstack，设置开机自启动，方便我们的服务后续能够实现开机自启动，这也是通过Docker安装的一个重大优势，虚拟机形式难以实现开机自启动HA。</li>
 </ol>
 <p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%207.png" alt="image.png"></p>
-<ol>
+<ol start="2">
 <li>设置dns-sd.sh脚本的开机自启动， 打开终端。</li>
 </ol>
 <p>（1）创建启动项</p>
@@ -187,7 +187,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://kiteflyingee.github.io/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/" data-id="cmeh4be850000dpjl0f576kco" data-title="MacOS使用Docker运行HA并集成HomeKit" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://kiteflyingee.github.io/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/" data-id="cmeh5rh0200005yjl3cdl19j1" data-title="MacOS使用Docker运行HA并集成HomeKit" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
