@@ -1,18 +1,31 @@
+
+
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
   
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
   
-  <title>MacOS使用Docker运行HA并集成HomeKit | 风筝的博客</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="1. 所需文件 2. 安装过程 3. 设置开机自启动    搜索了很多关于Mac安装HomeAssistant的教程，提供的都是UTM虚拟机的安装方式，这种方式开机自启动是一个很大的问题，另外OS版本镜像大，占资源比docker要多。后来在Github Gist找到一篇解决方案，经尝试可行（需要修改）。原文链接可参考：https:&#x2F;&#x2F;gist.github.com&#x2F;dieu&#x2F;96cded47">
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Devkite">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. 所需文件 2. 安装过程 3. 设置开机自启动    搜索了很多关于Mac安装HomeAssistant的教程，提供的都是UTM虚拟机的安装方式，这种方式开机自启动是一个很大的问题，另外OS版本镜像大，占资源比docker要多。后来在Github Gist找到一篇解决方案，经尝试可行（需要修改）。原文链接可参考：https:&#x2F;&#x2F;gist.github.com&#x2F;dieu&#x2F;96cded47">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MacOS使用Docker运行HA并集成HomeKit">
 <meta property="og:url" content="https://kiteflyingee.github.io/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/index.html">
 <meta property="og:site_name" content="风筝的博客">
 <meta property="og:description" content="1. 所需文件 2. 安装过程 3. 设置开机自启动    搜索了很多关于Mac安装HomeAssistant的教程，提供的都是UTM虚拟机的安装方式，这种方式开机自启动是一个很大的问题，另外OS版本镜像大，占资源比docker要多。后来在Github Gist找到一篇解决方案，经尝试可行（需要修改）。原文链接可参考：https:&#x2F;&#x2F;gist.github.com&#x2F;dieu&#x2F;96cded47">
-<meta property="og:locale">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%201.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%202.png">
@@ -26,87 +39,254 @@
 <meta property="article:modified_time" content="2025-08-18T13:44:13.726Z">
 <meta property="article:author" content="Devkite">
 <meta property="article:tag" content="HomeAssistant, Homekit, MacOS, Docker">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image.png">
   
-    <link rel="alternate" href="/atom.xml" title="风筝的博客" type="application/atom+xml">
   
   
-    <link rel="shortcut icon" href="/favicon.png">
+  <title>MacOS使用Docker运行HA并集成HomeKit - 风筝的博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
   
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
   
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"kiteflyingee.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
   
-<link rel="stylesheet" href="/css/style.css">
+
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
-
-  
-  
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
-
 <meta name="generator" content="Hexo 7.3.0"></head>
 
+
 <body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">风筝的博客</a>
-      </h1>
-      
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="MacOS使用Docker运行HA并集成HomeKit"></span>
+          
+        </div>
+
         
-          <a class="main-nav-link" href="/">Home</a>
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-08-18 15:39" pubdate>
+          2025年8月18日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
         
-          <a class="main-nav-link" href="/archives">Archives</a>
+          1.3k 字
         
-      </nav>
-      <nav id="sub-nav">
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
         
         
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://kiteflyingee.github.io"></form>
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
       </div>
+
+      
     </div>
   </div>
-</header>
+</div>
 
-      <div class="outer">
-        <section id="main"><article id="post-MacOS使用Docker运行HA并集成HomeKit" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/" class="article-date">
-  <time class="dt-published" datetime="2025-08-18T07:39:22.000Z" itemprop="datePublished">2025-08-18</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      MacOS使用Docker运行HA并集成HomeKit
-    </h1>
-  
+</div>
 
-      </header>
+  </header>
+
+  <main>
     
-    <div class="e-content article-entry" itemprop="articleBody">
       
-        <!-- toc -->
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">MacOS使用Docker运行HA并集成HomeKit</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <!-- toc -->
 
 <ul>
 <li><a href="#1-%E6%89%80%E9%9C%80%E6%96%87%E4%BB%B6">1. 所需文件</a></li>
@@ -130,191 +310,414 @@
 <ol>
 <li>Dockerfile</li>
 </ol>
-<figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> homeassistant/home-assistant:stable</span><br><span class="line"></span><br><span class="line"><span class="comment"># Install avahi-daemon in container</span></span><br><span class="line"><span class="comment"># https://gnanesh.me/avahi-docker-non-root.html</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">set</span> -ex \</span></span><br><span class="line"><span class="language-bash">  &amp;&amp; apk --no-cache --no-progress add avahi avahi-tools dbus   \</span></span><br><span class="line"><span class="language-bash"><span class="comment">#   Disable default Avahi services</span></span></span><br><span class="line">  &amp;&amp; rm /etc/avahi/services/* \</span><br><span class="line">  &amp;&amp; rm -rf /var/cache/apk/*</span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> docker-entrypoint.sh /usr/local/sbin/</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">chmod</span> +x /usr/local/sbin/docker-entrypoint.sh</span></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;/usr/local/sbin/docker-entrypoint.sh&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs docker"><span class="hljs-keyword">FROM</span> homeassistant/home-assistant:stable<br><br><span class="hljs-comment"># Install avahi-daemon in container</span><br><span class="hljs-comment"># https://gnanesh.me/avahi-docker-non-root.html</span><br><span class="hljs-keyword">RUN</span><span class="language-bash"> <span class="hljs-built_in">set</span> -ex \</span><br><span class="language-bash">  &amp;&amp; apk --no-cache --no-progress add avahi avahi-tools dbus   \</span><br><span class="language-bash"><span class="hljs-comment">#   Disable default Avahi services</span></span><br>  &amp;&amp; rm /etc/avahi/services/* \<br>  &amp;&amp; rm -rf /var/cache/apk/*<br><br><span class="hljs-keyword">COPY</span><span class="language-bash"> docker-entrypoint.sh /usr/local/sbin/</span><br><span class="hljs-keyword">RUN</span><span class="language-bash"> <span class="hljs-built_in">chmod</span> +x /usr/local/sbin/docker-entrypoint.sh</span><br><span class="hljs-keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="hljs-string">&quot;/usr/local/sbin/docker-entrypoint.sh&quot;</span>]</span><br></code></pre></td></tr></table></figure>
 
 <ol start="2">
 <li><a target="_blank" rel="noopener" href="http://docker-entrypoint.sh/">docker-entrypoint.sh</a></li>
 </ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">set</span> -euxo pipefail</span><br><span class="line"></span><br><span class="line"><span class="comment"># Start dbus and avahi-daemon</span></span><br><span class="line"><span class="built_in">mkdir</span> -p /var/run/dbus/</span><br><span class="line"><span class="built_in">rm</span> -f /run/dbus/dbus.pid</span><br><span class="line">dbus-uuidgen &gt; /var/lib/dbus/machine-id</span><br><span class="line">dbus-daemon --config-file=/usr/share/dbus-1/system.conf --print-address</span><br><span class="line">avahi-daemon --daemonize </span><br><span class="line"></span><br><span class="line"><span class="comment"># Run anything else you want to run before HA starts...</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Run original entrypoint</span></span><br><span class="line"><span class="built_in">exec</span> /init</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash</span><br><span class="hljs-built_in">set</span> -euxo pipefail<br><br><span class="hljs-comment"># Start dbus and avahi-daemon</span><br><span class="hljs-built_in">mkdir</span> -p /var/run/dbus/<br><span class="hljs-built_in">rm</span> -f /run/dbus/dbus.pid<br>dbus-uuidgen &gt; /var/lib/dbus/machine-id<br>dbus-daemon --config-file=/usr/share/dbus-1/system.conf --print-address<br>avahi-daemon --daemonize <br><br><span class="hljs-comment"># Run anything else you want to run before HA starts...</span><br><br><span class="hljs-comment"># Run original entrypoint</span><br><span class="hljs-built_in">exec</span> /init<br></code></pre></td></tr></table></figure>
 
 <ol start="3">
 <li>docker-compose.yml</li>
 </ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">version: <span class="string">&#x27;1&#x27;</span></span><br><span class="line">services:</span><br><span class="line">  homeassistant:</span><br><span class="line">    container_name: homeassistant</span><br><span class="line">    build: .</span><br><span class="line">    volumes:</span><br><span class="line">      - ./config:/config</span><br><span class="line">      - /etc/localtime:/etc/localtime:ro</span><br><span class="line">    environment:</span><br><span class="line">      - TZ=Asia/Shanghai</span><br><span class="line">    network_mode: host</span><br><span class="line">    restart: unless-stopped</span><br><span class="line">    privileged: <span class="literal">true</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash">version: <span class="hljs-string">&#x27;1&#x27;</span><br>services:<br>  homeassistant:<br>    container_name: homeassistant<br>    build: .<br>    volumes:<br>      - ./config:/config<br>      - /etc/localtime:/etc/localtime:ro<br>    environment:<br>      - TZ=Asia/Shanghai<br>    network_mode: host<br>    restart: unless-stopped<br>    privileged: <span class="hljs-literal">true</span><br><br></code></pre></td></tr></table></figure>
 
 <ol start="4">
 <li><a target="_blank" rel="noopener" href="http://dns-sd.sh/">dns-sd.sh</a></li>
 </ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash -x</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># register HASS Bridge by getting the avahi-browse output from the homeassistant container</span></span><br><span class="line">DNS_SD_NAME=<span class="string">&quot;HASS Bridge&quot;</span></span><br><span class="line"></span><br><span class="line">LOG_FILE=<span class="string">&quot;./dns-sd.log&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">prepare_command</span></span>() &#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&#x27;/usr/local/bin/docker exec -t $(/usr/local/bin/docker ps | grep homeassistant | cut -d&quot; &quot; -f1) avahi-browse -t -r -p -k _hap._tcp | grep -m 1 &quot;HASS Bridge&quot; | cut -d&quot;;&quot; -f5-6,9-10 | awk -F&quot;;&quot; &#x27;</span>\&#x27;<span class="string">&#x27;&#123;printf &quot;dns-sd -R \&quot;HASS Bridge\&quot; %s %s %s %s\n&quot;, $1, $2, $3, $4&#125;&#x27;</span>\&#x27;<span class="string">&#x27;&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">DNS_SD_CMD=<span class="string">&quot;&quot;</span>  <span class="comment"># Declare CMD as a global variable</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">run_command</span></span>() &#123;</span><br><span class="line">    PREPARE=$(prepare_command)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Prepare command: <span class="variable">$PREPARE</span>&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">    DNS_SD_CMD=$(<span class="built_in">eval</span> <span class="variable">$PREPARE</span>)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Running command: <span class="variable">$DNS_SD_CMD</span>&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">    <span class="built_in">eval</span> <span class="variable">$DNS_SD_CMD</span> &gt;&gt; <span class="variable">$LOG_FILE</span> 2&gt;&amp;1 &amp;</span><br><span class="line">    pid=$!</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Command running with PID: <span class="variable">$pid</span>&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">check_and_run_command</span></span>() &#123;</span><br><span class="line">    <span class="keyword">if</span> pgrep -f <span class="string">&quot;<span class="variable">$DNS_SD_NAME</span>&quot;</span> &gt;/dev/null; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;Command is already running. Killing it...&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">        pkill -f <span class="string">&quot;<span class="variable">$DNS_SD_NAME</span>&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    run_command</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">check_if_need_run</span></span>() &#123;</span><br><span class="line">    PREPARE=$(prepare_command)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Prepare command: <span class="variable">$PREPARE</span>&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">    NEW_DNS_SD_CMD=$(<span class="built_in">eval</span> <span class="variable">$PREPARE</span>)</span><br><span class="line">    <span class="keyword">if</span> [[ <span class="string">&quot;<span class="variable">$NEW_DNS_SD_CMD</span>&quot;</span> != <span class="string">&quot;<span class="variable">$DNS_SD_CMD</span>&quot;</span> ]]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;DNS_SD_CMD is not the same.&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">        check_and_run_command</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;DNS_SD_CMD is the same.&quot;</span> | <span class="built_in">tee</span> -a <span class="variable">$LOG_FILE</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">interval=86400  <span class="comment"># 24 hours in seconds</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Infinite loop to periodically run the check</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    check_if_need_run</span><br><span class="line">    <span class="built_in">sleep</span> <span class="variable">$interval</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash -x</span><br><br><span class="hljs-comment"># register HASS Bridge by getting the avahi-browse output from the homeassistant container</span><br>DNS_SD_NAME=<span class="hljs-string">&quot;HASS Bridge&quot;</span><br><br>LOG_FILE=<span class="hljs-string">&quot;./dns-sd.log&quot;</span><br><br><span class="hljs-function"><span class="hljs-title">prepare_command</span></span>() &#123;<br>    <span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;/usr/local/bin/docker exec -t $(/usr/local/bin/docker ps | grep homeassistant | cut -d&quot; &quot; -f1) avahi-browse -t -r -p -k _hap._tcp | grep -m 1 &quot;HASS Bridge&quot; | cut -d&quot;;&quot; -f5-6,9-10 | awk -F&quot;;&quot; &#x27;</span>\&#x27;<span class="hljs-string">&#x27;&#123;printf &quot;dns-sd -R \&quot;HASS Bridge\&quot; %s %s %s %s\n&quot;, $1, $2, $3, $4&#125;&#x27;</span>\&#x27;<span class="hljs-string">&#x27;&#x27;</span><br>&#125;<br><br>DNS_SD_CMD=<span class="hljs-string">&quot;&quot;</span>  <span class="hljs-comment"># Declare CMD as a global variable</span><br><br><span class="hljs-function"><span class="hljs-title">run_command</span></span>() &#123;<br>    PREPARE=$(prepare_command)<br>    <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Prepare command: <span class="hljs-variable">$PREPARE</span>&quot;</span> | <span class="hljs-built_in">tee</span> -a <span class="hljs-variable">$LOG_FILE</span><br>    DNS_SD_CMD=$(<span class="hljs-built_in">eval</span> <span class="hljs-variable">$PREPARE</span>)<br>    <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Running command: <span class="hljs-variable">$DNS_SD_CMD</span>&quot;</span> | <span class="hljs-built_in">tee</span> -a <span class="hljs-variable">$LOG_FILE</span><br>    <span class="hljs-built_in">eval</span> <span class="hljs-variable">$DNS_SD_CMD</span> &gt;&gt; <span class="hljs-variable">$LOG_FILE</span> 2&gt;&amp;1 &amp;<br>    pid=$!<br>    <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Command running with PID: <span class="hljs-variable">$pid</span>&quot;</span> | <span class="hljs-built_in">tee</span> -a <span class="hljs-variable">$LOG_FILE</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-title">check_and_run_command</span></span>() &#123;<br>    <span class="hljs-keyword">if</span> pgrep -f <span class="hljs-string">&quot;<span class="hljs-variable">$DNS_SD_NAME</span>&quot;</span> &gt;/dev/null; <span class="hljs-keyword">then</span><br>        <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Command is already running. Killing it...&quot;</span> | <span class="hljs-built_in">tee</span> -a <span class="hljs-variable">$LOG_FILE</span><br>        pkill -f <span class="hljs-string">&quot;<span class="hljs-variable">$DNS_SD_NAME</span>&quot;</span><br>    <span class="hljs-keyword">fi</span><br>    run_command<br>&#125;<br><br><span class="hljs-function"><span class="hljs-title">check_if_need_run</span></span>() &#123;<br>    PREPARE=$(prepare_command)<br>    <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Prepare command: <span class="hljs-variable">$PREPARE</span>&quot;</span> | <span class="hljs-built_in">tee</span> -a <span class="hljs-variable">$LOG_FILE</span><br>    NEW_DNS_SD_CMD=$(<span class="hljs-built_in">eval</span> <span class="hljs-variable">$PREPARE</span>)<br>    <span class="hljs-keyword">if</span> [[ <span class="hljs-string">&quot;<span class="hljs-variable">$NEW_DNS_SD_CMD</span>&quot;</span> != <span class="hljs-string">&quot;<span class="hljs-variable">$DNS_SD_CMD</span>&quot;</span> ]]; <span class="hljs-keyword">then</span><br>        <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;DNS_SD_CMD is not the same.&quot;</span> | <span class="hljs-built_in">tee</span> -a <span class="hljs-variable">$LOG_FILE</span><br>        check_and_run_command<br>    <span class="hljs-keyword">else</span><br>        <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;DNS_SD_CMD is the same.&quot;</span> | <span class="hljs-built_in">tee</span> -a <span class="hljs-variable">$LOG_FILE</span><br>    <span class="hljs-keyword">fi</span><br>&#125;<br><br>interval=86400  <span class="hljs-comment"># 24 hours in seconds</span><br><br><span class="hljs-comment"># Infinite loop to periodically run the check</span><br><span class="hljs-keyword">while</span> <span class="hljs-literal">true</span>; <span class="hljs-keyword">do</span><br>    check_if_need_run<br>    <span class="hljs-built_in">sleep</span> <span class="hljs-variable">$interval</span><br><span class="hljs-keyword">done</span><br></code></pre></td></tr></table></figure>
 
 <ol start="5">
 <li>configuration.yml, 在当前目录下新建config文件夹，把configuration.yml放进去。</li>
 </ol>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">homekit:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">HASS</span> <span class="string">Bridge</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">51827</span></span><br><span class="line">    <span class="attr">advertise_ip:</span> <span class="number">192.168</span><span class="number">.2</span><span class="number">.183</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">homekit:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">HASS</span> <span class="hljs-string">Bridge</span><br>    <span class="hljs-attr">port:</span> <span class="hljs-number">51827</span><br>    <span class="hljs-attr">advertise_ip:</span> <span class="hljs-number">192.168</span><span class="hljs-number">.2</span><span class="hljs-number">.183</span><br></code></pre></td></tr></table></figure>
 
 <p>最终目录结构可以参考：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">HA</span><br><span class="line">├── config</span><br><span class="line">│   └── configuration.yml</span><br><span class="line">├── dns-sd.sh</span><br><span class="line">├── docker-compose.yml</span><br><span class="line">├── docker-entrypoint.sh</span><br><span class="line">└── Dockerfile</span><br></pre></td></tr></table></figure>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs stylus">HA<br>├── config<br>│   └── configuration<span class="hljs-selector-class">.yml</span><br>├── dns-sd<span class="hljs-selector-class">.sh</span><br>├── docker-compose<span class="hljs-selector-class">.yml</span><br>├── docker-entrypoint<span class="hljs-selector-class">.sh</span><br>└── Dockerfile<br></code></pre></td></tr></table></figure>
 
 <h2><span id="2-安装过程">2. 安装过程</span></h2><p>docker的安装这里就不赘述了，网上有很多教程，MacOS大家可以安装Docker Desktop或者Orbstack，我这里使用的是Orbstack。</p>
 <ol>
 <li>打开终端。cd 到HA配置文件夹所在目录，检查文件结构是否和截图一致。</li>
 </ol>
-<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image.png" alt="image.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
 <ol start="2">
 <li>执行docker镜像编译，打包我们的镜像。这里会拉取homeassistant，如果拉取不下来可以使用<a target="_blank" rel="noopener" href="https://dockerproxy.net/">https://dockerproxy.net/</a>拉取镜像。因为构建我们的镜像还需要安装avahi avahi-tools dbus等，所以构建需要一段时间。</li>
 </ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker compose build</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker compose build<br></code></pre></td></tr></table></figure>
 
-<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%201.png" alt="image.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%201.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
 <ol start="3">
 <li>启动镜像</li>
 </ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker compose up -d</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker compose up -d<br></code></pre></td></tr></table></figure>
 
 <ol start="4">
 <li>打开<a target="_blank" rel="noopener" href="http://localhost:8123/config/integrations/dashboard">http://localhost:8123</a> 创建账号并登陆。</li>
 </ol>
-<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%202.png" alt="image.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%202.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
 <ol start="5">
 <li>添加集成，选择Apple，添加HomeKit Bridge, 选择你需要添加的实体类型，这里随便设置，后期可以修改。</li>
 </ol>
-<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%203.png" alt="image.png"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%204.png" alt="image.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%203.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%204.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
 <ol start="6">
 <li>添加完成会出现通知，点击通知弹出Homekit配对。<strong>这时候就要用到我们的dns-sd.sh脚本,在终端执行这个脚本, 这个脚本可以解决docker环境下mDNS问题</strong>。服务启动后，我们就可以使用iPhone设备配对了。终端关闭会导致Homekit Bridge失去连接，后面的章节将介绍如何开机自启动。</li>
 </ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh dns-sd.sh</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sh dns-sd.sh<br></code></pre></td></tr></table></figure>
 
-<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%205.png" alt="image.png"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%206.png" alt="image.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%205.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%206.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
 <ol start="7">
 <li>使用家庭App添加配件，扫码会弹出未经授权的设备，忽略警告继续，这样很快设备就能连接上了。</li>
 </ol>
-<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/5E866D32-4B39-4B40-BD7A-664624B9B0F4_1_102_o.jpeg" alt="5E866D32-4B39-4B40-BD7A-664624B9B0F4_1_102_o.jpeg"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/5E866D32-4B39-4B40-BD7A-664624B9B0F4_1_102_o.jpeg" srcset="/img/loading.gif" lazyload alt="5E866D32-4B39-4B40-BD7A-664624B9B0F4_1_102_o.jpeg"></p>
 <h2><span id="3-设置开机自启动">3. 设置开机自启动</span></h2><ol>
 <li>首先打开Orbstack，设置开机自启动，方便我们的服务后续能够实现开机自启动，这也是通过Docker安装的一个重大优势，虚拟机形式难以实现开机自启动HA。</li>
 </ol>
-<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%207.png" alt="image.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%207.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
 <ol start="2">
 <li>设置dns-sd.sh脚本的开机自启动， 打开终端。</li>
 </ol>
 <p>（1）创建启动项</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~/Library/LaunchAgents/com.user.dns-sd.plist</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">vim ~/Library/LaunchAgents/com.user.dns-sd.plist<br></code></pre></td></tr></table></figure>
 
 <p>(2) 粘贴如下内容，**注意这里需要替换你的dns-sd.sh存放的路径，**并保存文档。保存文档会自动添加启动项</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">plist</span> <span class="keyword">PUBLIC</span> <span class="string">&quot;-//Apple//DTD PLIST 1.0//EN&quot;</span> <span class="string">&quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plist</span> <span class="attr">version</span>=<span class="string">&quot;1.0&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>Label<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>com.user.dns-sd<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>ProgramArguments<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>/bin/bash<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>/Volumes/SSDFull/homeassistant/HA/dns-sd.sh<span class="tag">&lt;/<span class="name">string</span>&gt;</span>  <span class="comment">&lt;!-- 替换为你的dns-sd.sh脚本绝对路径 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>RunAtLoad<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>KeepAlive<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">true</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>WorkingDirectory<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span>&gt;</span>/Volumes/SSDFull/homeassistant/HA<span class="tag">&lt;/<span class="name">string</span>&gt;</span>  <span class="comment">&lt;!-- 替换为你的dns-sd.sh脚本所在目录 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">key</span>&gt;</span>EnvironmentVariables<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">key</span>&gt;</span>PATH<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">string</span>&gt;</span>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plist</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;?xml version=<span class="hljs-string">&quot;1.0&quot;</span> encoding=<span class="hljs-string">&quot;UTF-8&quot;</span>?&gt;</span><br><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">plist</span> <span class="hljs-keyword">PUBLIC</span> <span class="hljs-string">&quot;-//Apple//DTD PLIST 1.0//EN&quot;</span> <span class="hljs-string">&quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">plist</span> <span class="hljs-attr">version</span>=<span class="hljs-string">&quot;1.0&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">dict</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">key</span>&gt;</span>Label<span class="hljs-tag">&lt;/<span class="hljs-name">key</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">string</span>&gt;</span>com.user.dns-sd<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">key</span>&gt;</span>ProgramArguments<span class="hljs-tag">&lt;/<span class="hljs-name">key</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">array</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">string</span>&gt;</span>/bin/bash<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">string</span>&gt;</span>/Volumes/SSDFull/homeassistant/HA/dns-sd.sh<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span>  <span class="hljs-comment">&lt;!-- 替换为你的dns-sd.sh脚本绝对路径 --&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">array</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">key</span>&gt;</span>RunAtLoad<span class="hljs-tag">&lt;/<span class="hljs-name">key</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">true</span>/&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">key</span>&gt;</span>KeepAlive<span class="hljs-tag">&lt;/<span class="hljs-name">key</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">true</span>/&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">key</span>&gt;</span>WorkingDirectory<span class="hljs-tag">&lt;/<span class="hljs-name">key</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">string</span>&gt;</span>/Volumes/SSDFull/homeassistant/HA<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span>  <span class="hljs-comment">&lt;!-- 替换为你的dns-sd.sh脚本所在目录 --&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">key</span>&gt;</span>EnvironmentVariables<span class="hljs-tag">&lt;/<span class="hljs-name">key</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">dict</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">key</span>&gt;</span>PATH<span class="hljs-tag">&lt;/<span class="hljs-name">key</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">string</span>&gt;</span>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dict</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dict</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">plist</span>&gt;</span><br></code></pre></td></tr></table></figure>
 
 <p>(4) 重启电脑，过2-5分钟会自动启动服务。</p>
 
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/HomeAssistant-Homekit-MacOS-Docker/" class="print-no-link">#HomeAssistant, Homekit, MacOS, Docker</a>
       
     </div>
-    <footer class="article-footer">
-      <a data-url="https://kiteflyingee.github.io/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/" data-id="cmeh796ek000036jlh7kk5gtc" data-title="MacOS使用Docker运行HA并集成HomeKit" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>MacOS使用Docker运行HA并集成HomeKit</div>
+      <div>https://kiteflyingee.github.io/2025/08/18/MacOS使用Docker运行HA并集成HomeKit/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Devkite</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年8月18日</div>
+        </div>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HomeAssistant-Homekit-MacOS-Docker/" rel="tag">HomeAssistant, Homekit, MacOS, Docker</a></li></ul>
-
-    </footer>
-  </div>
-  
-    
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/HomeAssistant-Homekit-MacOS-Docker/" rel="tag">HomeAssistant, Homekit, MacOS, Docker</a></li></ul>
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
     </div>
+    <div class="license-icon iconfont"></div>
   </div>
 
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/HomeAssistant-Homekit-MacOS-Docker/" style="font-size: 10px;">HomeAssistant, Homekit, MacOS, Docker</a>
-    </div>
-  </div>
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/08/">August 2025</a></li></ul>
-    </div>
-  </div>
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">letzter Beitrag</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/">MacOS使用Docker运行HA并集成HomeKit</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
+            
+          </article>
+        </div>
       </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2025 Devkite<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
-  </div>
-</footer>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
 
     </div>
-    <nav id="mobile-nav">
+  </div>
+</div>
+
+
+
+
+
   
-    <a href="/" class="mobile-nav-link">Home</a>
+
+
+
   
-    <a href="/archives" class="mobile-nav-link">Archives</a>
+
+
+
   
-</nav>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
     
 
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
 
-<script src="/js/jquery-3.6.4.min.js"></script>
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
 
 
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
+    <script  src="/js/img-lazyload.js" ></script>
+  
 
 
 
 
-<script src="/js/script.js"></script>
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
 
 
 
 
 
-  </div>
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
 </body>
 </html>
