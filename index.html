@@ -96,13 +96,13 @@
         <p>搜索了很多关于Mac安装HomeAssistant的教程，提供的都是UTM虚拟机的安装方式，这种方式开机自启动是一个很大的问题，另外OS版本镜像大，占资源比docker要多。后来在Github Gist找到一篇解决方案，经尝试可行（<strong>需要修改</strong>）。原文链接可参考：<a target="_blank" rel="noopener" href="https://gist.github.com/dieu/96cded47544ee48ce0b3c69d529b723c">https://gist.github.com/dieu/96cded47544ee48ce0b3c69d529b723c</a></p>
 <h2 id="1-如何通过Docker安装HomeAssistant"><a href="#1-如何通过Docker安装HomeAssistant" class="headerlink" title="1. 如何通过Docker安装HomeAssistant"></a>1. 如何通过Docker安装HomeAssistant</h2><p>Mac版本通过Docker安装HomeAssistant集成Homekit最大的问题就是HASS Bridge连不上，通过本文脚本可以实现Docker环境下Bridge连接, <strong>需要严格按照本文的操作流程进行集成操作</strong>。</p>
 <p>需要准备几个文件： </p>
-<ol>
+<ul>
 <li>Dockerfile用于在官方的基础上构建补丁镜像   </li>
 <li><a target="_blank" rel="noopener" href="http://docker-entrypoint.sh/">docker-entrypoint.sh</a> docker镜像的入口   </li>
 <li>docker-compose.yml   </li>
 <li><a target="_blank" rel="noopener" href="http://dns-sd.sh/">dns-sd.sh</a> 用于解决MacOS下mdns问题   </li>
 <li>configuration.yml 用于homekit的配置。</li>
-</ol>
+</ul>
 <p>我把修改好的所有文件打包到百度云盘:，链接: <a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1S0cKbga8A3L1rDXoWEtOgQ">https://pan.baidu.com/s/1S0cKbga8A3L1rDXoWEtOgQ</a> 提取码: x2vc</p>
 <p>所需文件具体内容如下：</p>
 <ol>
@@ -187,7 +187,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://kiteflyingee.github.io/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/" data-id="cmeh5rh0200005yjl3cdl19j1" data-title="MacOS使用Docker运行HA并集成HomeKit" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="https://kiteflyingee.github.io/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/" data-id="cmeh5w92800009wjl4lzu6dhz" data-title="MacOS使用Docker运行HA并集成HomeKit" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
       
       
       
