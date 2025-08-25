@@ -61,7 +61,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"kiteflyingee.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"kiteflyingee.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -215,15 +215,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/" target="_self">
-          MacOS使用Docker运行HA并集成HomeKit
+        <a href="/2025/08/18/MacOS%E4%B8%8BDocker%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85HomeAssistant%E6%83%85%E5%86%B5%E4%B8%8BHomekit%E6%97%A0%E6%B3%95%E6%B7%BB%E5%8A%A0%E8%AE%BE%E5%A4%87%E9%97%AE%E9%A2%98/" target="_self">
+          [教程]MacOS Docker版Home Assistant连接HomeKit？告别“找不到配件”
         </a>
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/08/18/MacOS%E4%B8%8BDocker%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85HomeAssistant%E6%83%85%E5%86%B5%E4%B8%8BHomekit%E6%97%A0%E6%B3%95%E6%B7%BB%E5%8A%A0%E8%AE%BE%E5%A4%87%E9%97%AE%E9%A2%98/" target="_self">
         <div>
-          1. 所需文件 2. 安装过程 3. 设置开机自启动    搜索了很多关于Mac安装HomeAssistant的教程，提供的都是UTM虚拟机的安装方式，这种方式开机自启动是一个很大的问题，另外OS版本镜像大，占资源比docker要多。后来在Github Gist找到一篇解决方案，经尝试可行（需要修改）。原文链接可参考：https://gist.github.com/dieu/96cded47
+          在 MacOS 的 Docker 环境中运行 Home Assistant，却发现找不到任何 HomeKit 配件？这背后的根本原因是 HomeKit 设备依赖 mDNS&#x2F;Bonjour 协议在局域网中进行广播发现，而 Docker 默认的网络模式会阻断这种机制。本教程将提供一套清晰的解决方案，通过调整网络配置，让 mDNS&#x2F;Bonjour 流量正常通信，从而彻底解决设备发现难
         </div>
       </a>
 

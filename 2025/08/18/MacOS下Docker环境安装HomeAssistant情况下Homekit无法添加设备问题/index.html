@@ -19,12 +19,12 @@
   <meta name="author" content="Devkite">
   <meta name="keywords" content="">
   
-    <meta name="description" content="1. 所需文件 2. 安装过程 3. 设置开机自启动    搜索了很多关于Mac安装HomeAssistant的教程，提供的都是UTM虚拟机的安装方式，这种方式开机自启动是一个很大的问题，另外OS版本镜像大，占资源比docker要多。后来在Github Gist找到一篇解决方案，经尝试可行（需要修改）。原文链接可参考：https:&#x2F;&#x2F;gist.github.com&#x2F;dieu&#x2F;96cded47">
+    <meta name="description" content="在 MacOS 的 Docker 环境中运行 Home Assistant，却发现找不到任何 HomeKit 配件？这背后的根本原因是 HomeKit 设备依赖 mDNS&#x2F;Bonjour 协议在局域网中进行广播发现，而 Docker 默认的网络模式会阻断这种机制。本教程将提供一套清晰的解决方案，通过调整网络配置，让 mDNS&#x2F;Bonjour 流量正常通信，从而彻底解决设备发现难">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MacOS使用Docker运行HA并集成HomeKit">
-<meta property="og:url" content="https://kiteflyingee.github.io/2025/08/18/MacOS%E4%BD%BF%E7%94%A8Docker%E8%BF%90%E8%A1%8CHA%E5%B9%B6%E9%9B%86%E6%88%90HomeKit/index.html">
+<meta property="og:title" content="[教程]MacOS Docker版Home Assistant连接HomeKit？告别“找不到配件”">
+<meta property="og:url" content="https://kiteflyingee.github.io/2025/08/18/MacOS%E4%B8%8BDocker%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85HomeAssistant%E6%83%85%E5%86%B5%E4%B8%8BHomekit%E6%97%A0%E6%B3%95%E6%B7%BB%E5%8A%A0%E8%AE%BE%E5%A4%87%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="风筝的博客">
-<meta property="og:description" content="1. 所需文件 2. 安装过程 3. 设置开机自启动    搜索了很多关于Mac安装HomeAssistant的教程，提供的都是UTM虚拟机的安装方式，这种方式开机自启动是一个很大的问题，另外OS版本镜像大，占资源比docker要多。后来在Github Gist找到一篇解决方案，经尝试可行（需要修改）。原文链接可参考：https:&#x2F;&#x2F;gist.github.com&#x2F;dieu&#x2F;96cded47">
+<meta property="og:description" content="在 MacOS 的 Docker 环境中运行 Home Assistant，却发现找不到任何 HomeKit 配件？这背后的根本原因是 HomeKit 设备依赖 mDNS&#x2F;Bonjour 协议在局域网中进行广播发现，而 Docker 默认的网络模式会阻断这种机制。本教程将提供一套清晰的解决方案，通过调整网络配置，让 mDNS&#x2F;Bonjour 流量正常通信，从而彻底解决设备发现难">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image.png">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%201.png">
@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/5E866D32-4B39-4B40-BD7A-664624B9B0F4_1_102_o.jpeg">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/Kiteflyingee/image_store/img/image%207.png">
 <meta property="article:published_time" content="2025-08-18T07:39:22.000Z">
-<meta property="article:modified_time" content="2025-08-21T04:30:05.624Z">
+<meta property="article:modified_time" content="2025-08-25T03:20:06.814Z">
 <meta property="article:author" content="Devkite">
 <meta property="article:tag" content="HomeAssistant">
 <meta property="article:tag" content="Homekit">
@@ -47,7 +47,7 @@
   
   
   
-  <title>MacOS使用Docker运行HA并集成HomeKit - 风筝的博客</title>
+  <title>[教程]MacOS Docker版Home Assistant连接HomeKit？告别“找不到配件” - 风筝的博客</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -85,7 +85,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"kiteflyingee.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"kiteflyingee.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":60,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -201,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="MacOS使用Docker运行HA并集成HomeKit"></span>
+            <span id="subtitle" data-typed-text="[教程]MacOS Docker版Home Assistant连接HomeKit？告别“找不到配件”"></span>
           
         </div>
 
@@ -224,7 +224,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.3k 字
+          1.4k 字
         
       </span>
     
@@ -235,7 +235,7 @@
         
         
         
-          11 分钟
+          12 分钟
         
       </span>
     
@@ -272,12 +272,15 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">MacOS使用Docker运行HA并集成HomeKit</h1>
+            <h1 id="seo-header">[教程]MacOS Docker版Home Assistant连接HomeKit？告别“找不到配件”</h1>
             
             
               <div class="markdown-body">
                 
-                <!-- toc -->
+                <p>在 MacOS 的 Docker 环境中运行 Home Assistant，却发现找不到任何 HomeKit 配件？这背后的根本原因是 HomeKit 设备依赖 mDNS&#x2F;Bonjour 协议在局域网中进行广播发现，而 Docker 默认的网络模式会阻断这种机制。本教程将提供一套清晰的解决方案，通过调整网络配置，让 mDNS&#x2F;Bonjour 流量正常通信，从而彻底解决设备发现难题。</p>
+<span id="more"></span>
+
+<!-- toc -->
 
 <ul>
 <li><a href="#1-%E6%89%80%E9%9C%80%E6%96%87%E4%BB%B6">1. 所需文件</a></li>
@@ -427,8 +430,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>MacOS使用Docker运行HA并集成HomeKit</div>
-      <div>https://kiteflyingee.github.io/2025/08/18/MacOS使用Docker运行HA并集成HomeKit/</div>
+      <div>[教程]MacOS Docker版Home Assistant连接HomeKit？告别“找不到配件”</div>
+      <div>https://kiteflyingee.github.io/2025/08/18/MacOS下Docker环境安装HomeAssistant情况下Homekit无法添加设备问题/</div>
     </div>
     <div class="license-meta">
       
